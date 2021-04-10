@@ -1,0 +1,13 @@
+#grid-container {
+    display: grid;
+    background-color: #2196F3;
+  }
+
+  #pixel {
+    background-color: rgb(255, 255, 255);
+    border: 1px solid rgba(0, 0, 0, 0.8);
+  }
+
+  #pixel:hover {
+      filter: brightness(50%);
+  }
