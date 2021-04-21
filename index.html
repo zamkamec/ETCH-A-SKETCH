@@ -7,31 +7,307 @@
     <title>Etch A Sketch</title>
 </head>
 <body>
+    <div id="sizePrompt">
+        <div id="sizeButtons">
+            <button id="sizeButton1" onclick="sizing(8, 8); gridButtonPressed('sizeButton1');">8x8</button>
+            <button id="sizeButton2" onclick="sizing(12, 12); gridButtonPressed('sizeButton2');">12x12</button>
+            <button id="sizeButton3" onclick="sizing(16, 16); gridButtonPressed('sizeButton3');">16x16</button>
+            <button id="sizeButton4" onclick="sizing(32, 32); gridButtonPressed('sizeButton4');">32x32</button>
+            <button id="sizeButton5" onclick="sizing(48, 48); gridButtonPressed('sizeButton5');">48x48</button>
+            <button id="sizeButton6" onclick="sizing(64, 64); gridButtonPressed('sizeButton6');">64x64</button>
+        </div>
+        <div id="customSize">
+                <h1>Custom Size</h1>
+                <div id= inputFields>
+                    <p>Collumn</p>
+                    <input id="collumnValue" type="number" name="collumn"  min="1" max="64"  value="1" required>
+                    <p>Row</p>
+                    <input id="rowValue" type="number" name="row"  min="1" max="64" value="1" required>
+                    <div id="ratioIMG">
+                        <img id="square" src="Assets/square.png">
+                        <img id="horizontal" src="Assets/horizontal.png" style="filter: brightness(50%);" >
+                        <img id="vertical" src="Assets/vertical.png" style="filter: brightness(50%);">
+                    </div>
+                </div>
+                <div id="customButtons">
+                    <button id="createButton" onclick="buildGrid()" >Create</button>
+                    <button id="cancelButton" onclick="createWindow(false)" >Cancel</button>
+                </div>
+        </div>
+    </div>
+
+    <div id="grid-wrapper">
+        <div id="toolBox">                                                  
+            <input id="brush" type="image" class="button buttonPressed" onclick="sellectTool('brush')" src="Assets/brush.png" />
+            <input id="eraser" type="image" class="button" onclick="sellectTool('eraser')" src="Assets/eraser.png" />
+            <input id="eyedropper" type="image" class="button" onclick="sellectTool('eyedropper')" src="Assets/eyedropper.png" />
+            <input id="bucket" type="image" class="button" onclick="sellectTool('bucket')" src="Assets/bucket.png" />
+            <input id="rectangle" type="image" class="button" onclick="sellectTool('rectangle')" src="Assets/rectangle.png" />
+            <div id="colorSellect">
+                <div id="colorTools">
+                    <input id="defaultColor" type="image" onclick="defaultColor()" src="Assets/defaultcolor.png" />
+                    <input id="reverseColor" type="image" onclick="reverseColor()" src="Assets/reversecolor.png" />
+                </div>
+                <div id="colors">
+                    <input type="color" id="favcolor" name="favcolor" value="#000000">
+                    <input type="color" id="bgcolor" name="bgcolor" value="#FFFFFF">    
+                </div> 
+            </div>
+        </div>
     <div id="grid-container">
+    </div>
     </div>
 
     <script>
-        let collumn = window.prompt('collumn');
-        let collumnWitdh = 30;
-        let row = window.prompt('row');
+        // let collumn = window.prompt('collumn');
+        let collumnWitdh = 20;
+        // let row = window.prompt('row');
         let rowWitdh = collumnWitdh;
+        let tool = "brush";
+        let bgColor = document.getElementById("bgcolor").value;
+        document.getElementById("grid-container").style.backgroundColor = document.getElementById("bgcolor").value;
+        let color = document.getElementById("favcolor");
+        let collumnValue = document.getElementById("collumnValue");
+        let rowValue = document.getElementById("rowValue");
+        let values = [collumnValue, rowValue];
+        let mouseDown = false;
+        let firstPoint = false;
+        let secondPoint;
+        // buildGrid(collumn, row);
 
-        buildGrid(collumn, row);
+        // Button Things // // // // // // 
 
-        function buildGrid(collumn, row) {
+        document.body.addEventListener("mousedown", function(){
+            mouseDown = true;
+            console.log("Mouse Down");
+        });
+        document.body.addEventListener("mouseup", function(){
+            mouseDown = false;
+            console.log("Mouse Up");
+        });
+
+        function gridButtonPressed(buttonName) {
+            let gridButtons = document.getElementById("sizeButtons").children;
+            for (let i = 0; i < gridButtons.length; i++) {
+                gridButtons[i].classList.remove("gridButtonPressed");
+                
+            }
+            document.getElementById(buttonName).classList.add("gridButtonPressed");
+        }
+
+        function createWindow(show) {
+            let newWindow = document.getElementById("sizePrompt");
+            let toolBox = document.getElementById("toolBox");
+            if(show){
+                newWindow.style.display = "flex";
+                toolBox.style.display = "none";
+            }else{
+                newWindow.style.display = "none";
+                toolBox.style.display = "flex";
+            }
+        }
+        function buildGrid() {
+            console.log("hello")
+            let collumn = document.getElementById("collumnValue").value;
+            let row = document.getElementById("rowValue").value;
+            console.log("Created " + row + "x" + collumn +" grid");
+            createWindow(false);
             let gridContainer = document.getElementById("grid-container");
-
-            gridContainer.style.gridTemplateColumns = "repeat(" + collumn + ", " + collumnWitdh + "px)";
-            gridContainer.style.gridTemplateRows = "repeat(" + row + ", " + rowWitdh + "px)";
+            gridContainer.style.gridTemplateColumns = "repeat(" + collumn + ", " + "0.5fr)";
+            gridContainer.style.gridTemplateRows = "repeat(" + row + ", " + "0.5fr)";
 
             for (let i = 0; i < (row*collumn); i++) {
-                let pixel = document.createElement("DIV")
-                pixel.setAttribute("id", "pixel")
+                let pixel = document.createElement("DIV");
+                pixel.setAttribute("class", "pixel");
+                pixel.setAttribute("draggable", "false");
+                pixel.addEventListener("click", function(){
+                    if(!mouseDown){
+                        if (tool === 'brush'){
+                            pixel.style.backgroundColor = color.value;
+                        }else if (tool === 'eraser'){
+                            pixel.style.backgroundColor = "transparent"; 
+                        }else if (tool === 'eyedropper') {
+                                console.log("Color sampled");
+                                color.value = rgbToHex(pixel.style.backgroundColor);
+                                console.log("new color is " + color.value);
+                                sellectTool('brush');              
+                        }else if (tool === 'bucket'){                    
+                            let startIndex = (Array.prototype.indexOf.call(gridContainer.children, pixel) + 1);
+                            console.log("index is " + startIndex);
+                            let indexColor = pixel.style.backgroundColor;
+                            let targetSquares = [];
+                            targetSquares.push(startIndex);
+                            while (targetSquares.length) {
+                                console.log("targetSquares");
+                                console.log(targetSquares);
+                                let selectedSquare = targetSquares.shift();
+
+                            if (gridContainer.childNodes[selectedSquare].style.backgroundColor === indexColor){
+                                gridContainer.childNodes[selectedSquare].style.backgroundColor = color.value;
+                            }                  
+
+                            if((selectedSquare + 1) <= (row*collumn) && ((selectedSquare + 1) % +collumn !== 1)){
+                                if(gridContainer.childNodes[(selectedSquare + 1)].style.backgroundColor === indexColor) {
+                                    targetSquares.push((selectedSquare + 1));
+                                }
+                            }
+                            if((selectedSquare - 1) > 0  && ((selectedSquare - 1) % +collumn !== 0)){
+                                console.log((selectedSquare - 1) % +collumn);
+                                if(gridContainer.childNodes[(selectedSquare - 1)].style.backgroundColor === indexColor) {
+                                    targetSquares.push((selectedSquare - 1));
+                                }
+                            }
+                            if((+selectedSquare + +collumn) <= (row*collumn)){
+                                if(gridContainer.childNodes[(+selectedSquare + +collumn)].style.backgroundColor === indexColor) {
+                                    targetSquares.push((+selectedSquare + +collumn));
+                                }
+                            }
+                            if((selectedSquare - collumn) > 0){
+                                if(gridContainer.childNodes[(selectedSquare - collumn)].style.backgroundColor === indexColor) {
+                                    targetSquares.push((selectedSquare - collumn));
+                                }
+                            }  
+                            }
+
+
+
+
+
+
+
+                            // paintSet.add(childIndex);
+                            // let mainIndexColor = rgbToHex(window.getComputedStyle(gridContainer.childNodes[childIndex]).backgroundColor);
+                            // // const paint = [childIndex + 1, childIndex - 1, childIndex + collumn, childIndex - collumn];
+
+                            // for (let i = 0; i < paintSet.size + 1; i++) {
+                            //     console.log('Heyo 1'); 
+                            //     if((childIndex) > 0 && (childIndex) <= (collumn*row) && (rgbToHex(window.getComputedStyle(gridContainer.childNodes[childIndex]).backgroundColor) === mainIndexColor)) {   
+                            //         paintSet.add((childIndex));
+                            //         gridContainer.childNodes[childIndex].style.backgroundColor = color.value; 
+                            //         console.log('Heyo 2');
+                            //         childIndex += 1;
+                            //     }else{
+                            //         let tries = 1;
+                            //         for (let i = 0; i < tries; i++) {
+                            //             console.log("lets try again for " + i + "th time");
+                            //             childIndex++;
+                            //             if ((rgbToHex(window.getComputedStyle(gridContainer.childNodes[childIndex]).backgroundColor) === mainIndexColor)){
+                            //             console.log("broken at " + childIndex);
+                            //             break;
+                            //             }else{
+                            //                 tries++;
+                            //             }
+
+                            //         }
+
+
+                            //         console.log("square color" + rgbToHex(window.getComputedStyle(gridContainer.childNodes[childIndex]).backgroundColor));
+                            //         console.log("selcted color" + mainIndexColor);
+                            //         console.log('Heyo 3');
+                            //         i--;
+                            //     }
+                            //     console.log(paintSet);                            
+                            // }
+
+
+
+
+                            // // for (let i= 0; i < paint.length; i++) {
+                            // //     if(pixel.style.backgroundColor == gridContainer.childNodes[paint[i]].style.backgroundColor) {
+                            // //         gridContainer.childNodes[paint[i]].style.backgroundColor = color.value;  
+                            // //     }    
+                            // // }
+
+                            // pixel.style.backgroundColor = color.value;
+                    }else if (tool === 'rectangle'){
+                        if(mouseDown){
+                            firstPoint = (Array.prototype.indexOf.call(gridContainer.children, pixel));
+                        }else if(!mouseDown && firstPoint !== none) {
+                            secondPoint = (Array.prototype.indexOf.call(gridContainer.children, pixel));
+                            console.log("1st point " + firstPoint);
+                            console.log("2nd point " + secondPoint);
+                        }
+
+                    };
+                }});
                 gridContainer.appendChild(pixel);
             }
         }
+        
+        function sizing(collumnValue, rowValue) {
+            document.getElementById("collumnValue").value = collumnValue;
+            document.getElementById("rowValue").value = rowValue;
+        }
+
+        function defaultColor() {
+            document.getElementById("bgcolor").value = "#FFFFFF";
+            color.value = "#000000";
+            document.getElementById("grid-container").style.backgroundColor = document.getElementById("bgcolor").value; 
+
+        }
+
+        function reverseColor() {
+            let oldColor = color.value;
+            color.value = document.getElementById("bgcolor").value;
+            document.getElementById("bgcolor").value = oldColor;
+            document.getElementById("grid-container").style.backgroundColor = document.getElementById("bgcolor").value;    
+        }
+        
+        function gridShow(show) {
+            if(show){
+                for (let i = 0; i < document.getElementsByClassName("pixel").length; i++) {
+                document.getElementsByClassName("pixel")[i].style.border = ".01px solid #000000" ;    
+                }
+            }else{
+                for (let i = 0; i < document.getElementsByClassName("pixel").length; i++) {
+                document.getElementsByClassName("pixel")[i].style.border = "none" ;    
+                }
+            }
+        }
+        document.getElementById("bgcolor").addEventListener('change', (event) => {
+            document.getElementById("grid-container").style.backgroundColor = document.getElementById("bgcolor").value;
+        })
 
 
+        // Grid Ratio
+        for (let i = 0; i < values.length; i++) {
+            values[i].addEventListener('change', (event) => {
+            for (let i = 0; i < document.getElementById("ratioIMG").children.length; i++) {
+                document.getElementById("ratioIMG").children[i].style.filter = "brightness(50%)";
+            }
+            if(collumnValue.value > rowValue.value){
+                document.getElementById("horizontal").style.filter = "brightness(100%)";
+            }else if(collumnValue.value < rowValue.value){
+                document.getElementById("vertical").style.filter = "brightness(100%)";
+            }else if(collumnValue.value == rowValue.value){
+                document.getElementById("square").style.filter = "brightness(100%)";
+            }
+        }); 
+        }
+
+        function testing(index) {
+            let startIndex = (Array.prototype.indexOf.call(gridContainer.children, pixel));
+
+        }
+
+
+        function sellectTool(toolName) {
+        for (let i = 0; i < document.getElementById("toolBox").children.length; i++){
+            document.getElementById("toolBox").children[i].classList.remove("buttonPressed");
+        }
+        document.getElementById(toolName).classList.add("buttonPressed");
+            tool = toolName;
+            console.log("You have sellected " + tool);
+        }
+
+        function rgbToHex(rgbColor) {
+            let hexColor= "#";
+            rgbColor = String(rgbColor).replace("rgb", '').replace("(", '').replace(")", '').split(",");
+            for (let i = 0; i < rgbColor.length; i++) {
+                hexColor += ("0" + ((+rgbColor[i]).toString(16))).slice(-2);
+            }
+            return hexColor;
+        }
     </script>
 </body>
 </html>
