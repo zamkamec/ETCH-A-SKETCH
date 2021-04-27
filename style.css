@@ -3,6 +3,10 @@ body{
     display: flex;
     justify-content: center;
     align-content: center;
+    flex-wrap: wrap;
+    text-align: center;
+    height: 100%;
+    margin: 0;
 }
 
 #sizePrompt {
@@ -12,7 +16,7 @@ body{
     width: 650px;
     height: 500px;
     padding: 20 20px;
-    margin-top: 7%;
+    /* margin-top: 7%; */
 }
 
 #customButtons{
@@ -149,7 +153,6 @@ body{
 /* ToolBox Styles */
 
 #toolBox{
-    display: flex;
     flex-direction: column;
     background-color: #323232;
     width: 100px;
@@ -224,11 +227,40 @@ input[type="color"] {
     margin: 25px;
 }
 
+#toolBoxR{
+    display: none;
+    flex-direction: column;
+    background-color: #323232;
+    width: 100px;
+    height: 600px;
+    margin-left: 50px;
+    justify-content: flex-start;
+}
+
+#toolBoxR .button{
+    background-color: #323232;
+    border: none;
+    color: white;
+    padding: 30px 30px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 5px;
+}
+#toolBoxR .button:hover{
+    background-color: #292929;
+    border: 1px solid #474747;;
+}
+#toolBoxR .buttonPressed{
+    background-color: #1f1f1f;
+    border: 1px solid #3e3e3e;;
+}
+
 #grid-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 5%;
 }
 
 #grid-container {
@@ -236,7 +268,7 @@ input[type="color"] {
     grid-gap: 0px;
     width: 500px;
     height: 500px;
-    background-color: #FFFFFF;
+    background-color: transparent;
   }
 
 .pixel {
