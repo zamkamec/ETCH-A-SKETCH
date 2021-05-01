@@ -179,37 +179,34 @@
         }
 
         function bucket(e) {
-            let startIndex = (Array.prototype.indexOf.call(gridContainer.children, e.target) + 1);
+            let startIndex = (Array.prototype.indexOf.call(gridContainer.children, e.target));
             console.log("index is " + startIndex);
             let indexColor = e.target.style.backgroundColor;
             let targetSquares = [];
             targetSquares.push(startIndex);
             while (targetSquares.length) {
-                console.log("targetSquares");
-                console.log(targetSquares);
                 let selectedSquare = targetSquares.shift();
 
             if (gridContainer.childNodes[selectedSquare].style.backgroundColor === indexColor){
                 gridContainer.childNodes[selectedSquare].style.backgroundColor = color.value;
             }                  
 
-            if((selectedSquare + 1) <= (row*collumn) && ((selectedSquare + 1) % +collumn !== 1)){
+            if((selectedSquare + 1) <= ((row*collumn) - 1) && ((selectedSquare + 1) % +collumn !== 0)){
                 if(gridContainer.childNodes[(selectedSquare + 1)].style.backgroundColor === indexColor) {
                     targetSquares.push((selectedSquare + 1));
                 }
             }
-            if((selectedSquare - 1) > 0  && ((selectedSquare - 1) % +collumn !== 0)){
-                console.log((selectedSquare - 1) % +collumn);
+            if((selectedSquare - 1) >= 0  && ((selectedSquare) % +collumn !== 0)){
                 if(gridContainer.childNodes[(selectedSquare - 1)].style.backgroundColor === indexColor) {
                     targetSquares.push((selectedSquare - 1));
                 }
             }
-            if((+selectedSquare + +collumn) <= (row*collumn)){
-                if(gridContainer.childNodes[(+selectedSquare + +collumn)].style.backgroundColor === indexColor) {
+            if((+selectedSquare + +collumn) <= ((row*collumn)- 1)){
+                if(gridContainer.childNodes[(selectedSquare + +collumn)].style.backgroundColor === indexColor) {
                     targetSquares.push((+selectedSquare + +collumn));
                 }
             }
-            if((selectedSquare - collumn) > 0){
+            if((selectedSquare - collumn) >= 0){
                 if(gridContainer.childNodes[(selectedSquare - collumn)].style.backgroundColor === indexColor) {
                     targetSquares.push((selectedSquare - collumn));
                 }
@@ -227,10 +224,11 @@
             }
 
             if (firstPoint !== null && secondPoint !== null) {
-                if(firstPoint < secondPoint){
-
-                }else if (firstPoint > secondPoint){
+                if(firstPoint > secondPoint){
                     [firstPoint, secondPoint] = [secondPoint, firstPoint];
+                }
+                  if(secondPoint < (firstPoint + (collumn * ((Math.floor(secondPoint / +collumn) +1) - (Math.floor(firstPoint / +collumn) +1))))){
+                         [secondPoint, firstPoint] = [(firstPoint + (collumn * ((Math.floor(secondPoint / +collumn) +1) - (Math.floor(firstPoint / +collumn) +1)))), (secondPoint - (collumn * ((Math.floor(secondPoint / +collumn) +1) - (Math.floor(firstPoint / +collumn) +1))))];
                 }
                 let recHeight = (Math.floor((secondPoint - firstPoint) / collumn) )+ 1;
                 let recWidth = ((secondPoint - ((recHeight - 1)*collumn)) - firstPoint) + 1;
