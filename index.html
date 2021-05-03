@@ -62,7 +62,7 @@
         <input id="clear" type="image" class="button" onclick="clearPixels()" src="Assets/clear.png" />
     </div>
     </div>
-
+    <h1 id='signature'>Zamkamec</h1>
     <script>
         let tool = "brush";
         let bgColor = document.getElementById("bgcolor").value;
@@ -74,7 +74,6 @@
         let row;
         let pixel;
         let gridContainer = document.getElementById("grid-container");
-        let mouseDown = false;
         let firstPoint = null;
         let secondPoint = null;
         let grid = true;
@@ -180,7 +179,6 @@
 
         function bucket(e) {
             let startIndex = (Array.prototype.indexOf.call(gridContainer.children, e.target));
-            console.log("index is " + startIndex);
             let indexColor = e.target.style.backgroundColor;
             let targetSquares = [];
             targetSquares.push(startIndex);
@@ -217,10 +215,8 @@
         function rectangle(e) {
             if(e.buttons > 0 && firstPoint === null){
                 firstPoint = (Array.prototype.indexOf.call(gridContainer.children, e.target));
-                console.log("1st point " + firstPoint);
             }else{
                 secondPoint = (Array.prototype.indexOf.call(gridContainer.children, e.target));               
-                console.log("2nd point " + secondPoint);
             }
 
             if (firstPoint !== null && secondPoint !== null) {
@@ -232,21 +228,17 @@
                 }
                 let recHeight = (Math.floor((secondPoint - firstPoint) / collumn) )+ 1;
                 let recWidth = ((secondPoint - ((recHeight - 1)*collumn)) - firstPoint) + 1;
-                    console.log("height is " + recHeight);           
-                    console.log("Witdh is " + recWidth);
                     for (let i = 0; i < recHeight; i++) {
                         let targetPoint = firstPoint + (collumn * i);
                         gridContainer.childNodes[targetPoint].style.backgroundColor = color.value;
                         targetPoint = secondPoint - (collumn * i);
                         gridContainer.childNodes[targetPoint].style.backgroundColor = color.value;
-                        console.log(targetPoint); 
                     }
                     for (let i = 0; i < recWidth; i++) {
                         let targetPoint = firstPoint + i;
                         gridContainer.childNodes[targetPoint].style.backgroundColor = color.value;
                         targetPoint = secondPoint - i;
                         gridContainer.childNodes[targetPoint].style.backgroundColor = color.value;
-                        console.log(targetPoint);
                         
                     }
                 firstPoint = null;

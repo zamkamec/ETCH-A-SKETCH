@@ -10,6 +10,13 @@ body{
     user-select: none;
 }
 
+#signature {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    color: #323232;
+}
+
 #sizePrompt {
     display: flex;
     position: absolute;
