@@ -20,9 +20,9 @@
                 <h1>Custom Size</h1>
                 <div id= inputFields>
                     <p>Collumn</p>
-                    <input id="collumnValue" type="number" name="collumn"  min="1" max="64"  value="1" required>
+                    <input id="collumnValue" type="number" name="collumn"  min="1" max="64"  value="8" required>
                     <p>Row</p>
-                    <input id="rowValue" type="number" name="row"  min="1" max="64" value="1" required>
+                    <input id="rowValue" type="number" name="row"  min="1" max="64" value="8" required>
                     <div id="ratioIMG">
                         <img id="square" src="Assets/square.png">
                         <img id="horizontal" src="Assets/horizontal.png" style="filter: brightness(50%);" >
@@ -180,7 +180,11 @@
         function bucket(e) {
             let startIndex = (Array.prototype.indexOf.call(gridContainer.children, e.target));
             let indexColor = e.target.style.backgroundColor;
+            if (rgbToHex(indexColor) === color.value) {
+                return;
+            }
             let targetSquares = [];
+            let setSquares = new Set([startIndex]);
             targetSquares.push(startIndex);
             while (targetSquares.length) {
                 let selectedSquare = targetSquares.shift();
@@ -188,25 +192,28 @@
             if (gridContainer.childNodes[selectedSquare].style.backgroundColor === indexColor){
                 gridContainer.childNodes[selectedSquare].style.backgroundColor = color.value;
             }                  
-
-            if((selectedSquare + 1) <= ((row*collumn) - 1) && ((selectedSquare + 1) % +collumn !== 0)){
+            if((selectedSquare + 1) <= ((row*collumn) - 1) && ((selectedSquare + 1) % +collumn !== 0) && setSquares.has((selectedSquare + 1)) === false){
                 if(gridContainer.childNodes[(selectedSquare + 1)].style.backgroundColor === indexColor) {
                     targetSquares.push((selectedSquare + 1));
+                    setSquares.add((selectedSquare + 1));
                 }
             }
-            if((selectedSquare - 1) >= 0  && ((selectedSquare) % +collumn !== 0)){
+            if((selectedSquare - 1) >= 0  && ((selectedSquare) % +collumn !== 0) && setSquares.has((selectedSquare - 1)) === false){
                 if(gridContainer.childNodes[(selectedSquare - 1)].style.backgroundColor === indexColor) {
                     targetSquares.push((selectedSquare - 1));
+                    setSquares.add((selectedSquare - 1));
                 }
             }
-            if((+selectedSquare + +collumn) <= ((row*collumn)- 1)){
+            if((+selectedSquare + +collumn) <= ((row*collumn)- 1) && setSquares.has((selectedSquare + +collumn)) === false){
                 if(gridContainer.childNodes[(selectedSquare + +collumn)].style.backgroundColor === indexColor) {
                     targetSquares.push((+selectedSquare + +collumn));
+                    setSquares.add((selectedSquare + +collumn));
                 }
             }
-            if((selectedSquare - collumn) >= 0){
+            if((selectedSquare - collumn) >= 0 && setSquares.has((selectedSquare - collumn)) === false){
                 if(gridContainer.childNodes[(selectedSquare - collumn)].style.backgroundColor === indexColor) {
                     targetSquares.push((selectedSquare - collumn));
+                    setSquares.add((selectedSquare - collumn));
                 }
             }
         }

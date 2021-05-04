@@ -15,6 +15,7 @@ body{
     right: 0;
     bottom: 0;
     color: #323232;
+    margin: 5px;
 }
 
 #sizePrompt {
